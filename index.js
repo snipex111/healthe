@@ -8,7 +8,8 @@ const passport = require('passport');
 const localstrategy = require('passport-local');
 const flash = require('connect-flash');
 const User = require('./models/users');
-
+const Patient = require('./models/patients');
+const Specialty = require('./models/specialties');
 
 const apperror = require('./apperror');
 const catchAsync = require('./catchAsync');
@@ -75,6 +76,28 @@ app.get('/users/register', (req, res) => {
 app.get('/users/login', (req, res) => {
     res.render('users/login')
 })
+app.get('/myprofile', (req, res) => {
+    if (req.user.usertype == 0) {
+        res.render('users/patientprofile');
+    }
+    else res.render('users/doctorprofile');
+})
+app.post('/patientprofile', catchAsync(async (req, res) => {
+
+    const newpat = await new Patient(req.body);
+    newpat.save();
+    console.log(newpat);
+    res.redirect('/specialties');
+
+}))
+
+app.get('/specialties', catchAsync(async (req, res) => {
+
+    const specialties = await Specialty.find();
+    res.render('appointments/specialties', { specialties });
+
+}))
+
 app.post('/register', catchAsync(async (req, res) => {
     try {
         const { email, username, password, usertype } = req.body;
@@ -83,7 +106,7 @@ app.post('/register', catchAsync(async (req, res) => {
         req.login(registereduser, err => {
             if (err) return next(err);
             req.flash('success', 'Welcome to Health-E!');
-            res.redirect('/');
+            res.redirect('/myprofile');
         })
     }
     catch (err) {

@@ -14,12 +14,6 @@ const PatientSchema = new Schema({
         type: String,
         required: true
     },
-    bloodgroup: {
-        type: String
-    },
-    weight: {
-        type: Number
-    },
     vaccinationstatus: {
         type: Number,
         required: true
