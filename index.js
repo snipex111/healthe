@@ -19,10 +19,50 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 
-mongoose.connect('mongodb+srv://minutemart:1234@cluster0.vsuxx.mongodb.net/minutemart?retryWrites=true&w=majority');
+mongoose.connect('mongodb+srv://healthe:1234@cluster0.ar5ex.mongodb.net/healthe?retryWrites=true&w=majority');
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
     console.log('Database connected');
 })
-const session = require('express-session');
+
+
+app.get('/', (req, res) => {
+    res.render('home');
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.listen(3000, () => {
+    console.log('serving on port 3000');
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
