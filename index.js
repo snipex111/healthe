@@ -77,8 +77,8 @@ app.get('/users/login', (req, res) => {
 })
 app.post('/register', catchAsync(async (req, res) => {
     try {
-        const { email, username, password } = req.body;
-        const user = new User({ email, username });
+        const { email, username, password, usertype } = req.body;
+        const user = new User({ email, username, usertype });
         const registereduser = await User.register(user, password);
         req.login(registereduser, err => {
             if (err) return next(err);
@@ -93,7 +93,9 @@ app.post('/register', catchAsync(async (req, res) => {
 }))
 app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/users/login' }), catchAsync(async (req, res) => {
     try {
-        req.flash('success', 'welcome back!');
+        if (req.user.usertype == 1)
+            req.flash('success', 'welcome back Doctor!');
+        else req.flash('success', 'welcome back Patient!');
 
         const redirectUrl = req.session.returnTo || '/';
         delete req.session.returnTo;
@@ -113,7 +115,10 @@ app.post('/login', passport.authenticate('local', { failureFlash: true, failureR
 
 
 
-
+app.get('/logout', catchAsync(async (req, res) => {
+    req.logout();
+    res.redirect('/users/login');
+}))
 
 
 
