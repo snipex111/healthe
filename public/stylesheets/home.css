@@ -1,0 +1,21 @@
+body {
+    color: whitesmoke;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+p {
+    font-size: 1.5rem;
+}
+
+#d1 {
+    background-color: #a85cf9;
+}
+
+#d2 {
+    color: black;
+    background-color: #6fdfdf;
+}
+
+#d3 {
+    background-color: #4b7be5;
+}
