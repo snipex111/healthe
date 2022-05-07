@@ -12,6 +12,7 @@ const Patient = require('./models/patients');
 const Specialty = require('./models/specialties');
 
 const apperror = require('./apperror');
+
 const catchAsync = require('./catchAsync');
 
 app.set('view engine', 'ejs')
@@ -35,6 +36,7 @@ db.once("open", () => {
 
 
 const session = require('express-session');
+const { isLoggedIn } = require('./middleware');
 
 const sessionOptions = {
     secret: 'thisisnotagoodsecret', resave: false, saveUninitialized: true,
@@ -76,7 +78,17 @@ app.get('/users/register', (req, res) => {
 app.get('/users/login', (req, res) => {
     res.render('users/login')
 })
-app.get('/myprofile', (req, res) => {
+app.get('/myprofile', isLoggedIn, catchAsync(async (req, res) => {
+
+    if (req.user.usertype == 0) {
+
+        const profiledetails = await Patient.findOne({ 'user': `${req.user._id}` });
+
+        res.render('users/showpatientinfo', { profiledetails });
+    }
+
+}))
+app.get('/newprofile', (req, res) => {
     if (req.user.usertype == 0) {
         res.render('users/patientprofile');
     }
@@ -85,16 +97,37 @@ app.get('/myprofile', (req, res) => {
 app.post('/patientprofile', catchAsync(async (req, res) => {
 
     const newpat = await new Patient(req.body);
+    newpat.user = req.user._id;
     newpat.save();
-    console.log(newpat);
+
     res.redirect('/specialties');
 
+}))
+
+app.get('/myprofile/:patientid/update', isLoggedIn, catchAsync(async (req, res) => {
+    const requiredpatient = await Patient.findById(req.params.patientid);
+
+    res.render('users/updatepatientinfo', { requiredpatient });
+}))
+
+app.put('/myprofile/:patientid', isLoggedIn, catchAsync(async (req, res) => {
+    const kal = req.params.patientid;
+    console.log(req.body);
+    await Patient.findByIdAndUpdate(req.params.patientid, req.body, { runValidators: true });
+
+    res.redirect('/myprofile');
 }))
 
 app.get('/specialties', catchAsync(async (req, res) => {
 
     const specialties = await Specialty.find();
     res.render('appointments/specialties', { specialties });
+
+}))
+app.get('/specialties/:specialtyid', catchAsync(async (req, res) => {
+
+    const specialty = await Specialty.findbyid(req.params.specialtyid).populate('doctors');
+    res.render('appointments/show', { specialty });
 
 }))
 
@@ -106,7 +139,7 @@ app.post('/register', catchAsync(async (req, res) => {
         req.login(registereduser, err => {
             if (err) return next(err);
             req.flash('success', 'Welcome to Health-E!');
-            res.redirect('/myprofile');
+            res.redirect('/newprofile');
         })
     }
     catch (err) {
@@ -120,7 +153,7 @@ app.post('/login', passport.authenticate('local', { failureFlash: true, failureR
             req.flash('success', 'welcome back Doctor!');
         else req.flash('success', 'welcome back Patient!');
 
-        const redirectUrl = req.session.returnTo || '/';
+        const redirectUrl = req.session.returnTo || '/specialties';
         delete req.session.returnTo;
         res.redirect(redirectUrl);
     }
