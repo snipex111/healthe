@@ -20,25 +20,23 @@
     <%- include('../partials/flash') %>
     <div class="container-fluid vh-100" id="bg">
         <div class="row">
-            <div class="col-sm-6 offset-sm-3 col-12 p-5 col-lg-4 offset-xl-4 vh-100" id="innerdiv">
-                <h3 class="mt-5 mb-2 text-center">New Appointment</h3>
-                <form action="/appointment" method="post" novalidate class="validated-form">
+            <div class="col-sm-6 offset-sm-3 col-12 col-lg-4 offset-xl-4 vh-100" id="innerdiv">
+                <h3 class="mb-2 mt-3 text-center">New Appointment</h3>
+                <form action="/appointment/<%= curdoc._id %>" method="post" novalidate class="validated-form">
                     <div class="mb-3">
                         <label for="doctorname" class="form-label">Doctor Name</label>
-                        <input type="text" name="doctorname" class="form-control" id="doctorname"
-                            aria-describedby="emailHelp">
+                        <input type="text" name="doctor" class="form-control" id="doctorname"
+                            aria-describedby="emailHelp" value="<%= curdoc.fullname %>" disabled>
                     </div>
                     <div class="mb-3">
                         <label for="fee" class="form-label">Fee</label>
-                        <input type="number" name="fee" class="form-control" id="fee">
+                        <input type="number" name="fee" class="form-control" id="fee" value="<%= curdoc.fee %>"
+                            disabled>
                     </div>
                     <div class="mb-3">
                         <label for="date" class="form-label">Date</label>
-                        <input type="date" name="date" class="form-control" id="date">
-                    </div>
-                    <div class="mb-3">
-                        <label for="time" class="form-label">Time</label>
-                        <input type="text" name="time" class="form-control" id="time">
+                        <input type="date" name="date" class="form-control" id="date" min="<%=stdate %>"
+                            max="<%=endate %>">
                     </div>
                     <div class="mb-3">
                         <label for="symptoms" class="form-label">Symptoms</label>

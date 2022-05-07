@@ -10,6 +10,7 @@ const flash = require('connect-flash');
 const User = require('./models/users');
 const Patient = require('./models/patients');
 const Specialty = require('./models/specialties');
+const Appointment = require('./models/appointments');
 
 const apperror = require('./apperror');
 
@@ -195,13 +196,46 @@ app.post('/login', passport.authenticate('local', { failureFlash: true, failureR
     }
 }))
 
-app.get('/book/:doctorid', catchAsync(async (req, res) => {
+app.get('/book/:doctorid', isLoggedIn, catchAsync(async (req, res) => {
     const curdoc = await doctors.findById(req.params.doctorid);
-    res.render('appointments/book', { curdoc });
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0');
+    let yyyy = today.getFullYear();
+    let stdate = yyyy + '-' + mm + '-' + dd;
+
+    Date.prototype.addDays = function (days) {
+        let date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+    }
+    let date = new Date();
+    today = date.addDays(10);
+    dd = String(today.getDate()).padStart(2, '0');
+    mm = String(today.getMonth() + 1).padStart(2, '0');
+    yyyy = today.getFullYear();
+    let endate = yyyy + '-' + mm + '-' + dd;
+
+    res.render('appointments/book', { curdoc, stdate, endate });
 }))
 
 
 
+app.post('/appointment/:doctorid', isLoggedIn, catchAsync(async (req, res) => {
+    const newappt = await new Appointment(req.body);
+    const curdoc = await doctors.findById(req.params.doctorid);
+    const curpar = await Patient.findOne({ 'user': `${req.user._id}` });
+    newappt.patient = curpar;
+    newappt.doctor = curdoc;
+    newappt.fee = curdoc.fee;
+    await newappt.save();
+    console.log(curpar);
+    curdoc.myappointments.push(newappt);
+    curpar.myappointments.push(newappt);
+    await curdoc.save();
+    await curpar.save();
+    res.redirect('/specialties');
+}))
 
 
 
