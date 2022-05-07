@@ -39,13 +39,12 @@
                     <div class="mb-3">
                         <select class="form-select-lg" aria-label="Default select example" name="selectspecialty"
                             style="min-width:100%;">
-                            <option value="Cardiologist">Cardiologist</option>
-                            <option value="Neurologist">Neurologist</option>
-                            <option value="Gynaecologist">Gynaecologist</option>
-                            <option value="Paediatrician">Paediatrician</option>
-                            <option value="Dentist">Dentist</option>
-                            <option value="Special Covid 19 Division">Special Covid 19 Division</option>
+                            <% for(let sp of specialties){ %>
+                                <option value="<%=sp.name%>">
+                                    <%=sp.name%>
+                                </option>
 
+                                <%}%>
                         </select>
                     </div>
 

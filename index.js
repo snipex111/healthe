@@ -98,12 +98,15 @@ app.get('/myprofile', isLoggedIn, catchAsync(async (req, res) => {
     }
 
 }))
-app.get('/newprofile', (req, res) => {
+app.get('/newprofile', catchAsync(async (req, res) => {
     if (req.user.usertype == 0) {
         res.render('users/patientprofile');
     }
-    else res.render('users/doctorprofile');
-})
+    else {
+        const specialties = await Specialty.find();
+        res.render('users/doctorprofile', { specialties });
+    }
+}))
 app.post('/patientprofile', catchAsync(async (req, res) => {
 
     const newpat = await new Patient(req.body);
