@@ -1,0 +1,17 @@
+body {
+    font-family: 'Source Serif Pro', serif;
+}
+
+#bg {
+    background-image: url('/public/photos/patientdetailsinfo.jpg');
+    background-size: cover;
+}
+
+#innerdiv {
+    background-color: rgba(0, 0, 0, 0.406);
+    background-size: cover;
+}
+
+h2 {
+    color: aliceblue;
+}

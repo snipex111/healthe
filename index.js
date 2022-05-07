@@ -37,6 +37,8 @@ db.once("open", () => {
 
 const session = require('express-session');
 const { isLoggedIn } = require('./middleware');
+const doctors = require('./models/doctors');
+const specialties = require('./models/specialties');
 
 const sessionOptions = {
     secret: 'thisisnotagoodsecret', resave: false, saveUninitialized: true,
@@ -86,6 +88,12 @@ app.get('/myprofile', isLoggedIn, catchAsync(async (req, res) => {
 
         res.render('users/showpatientinfo', { profiledetails });
     }
+    if (req.user.usertype == 1) {
+
+        const profiledetails = await doctors.findOne({ 'user': `${req.user._id}` }).populate('specialty');
+
+        res.render('users/showdoctorinfo', { profiledetails });
+    }
 
 }))
 app.get('/newprofile', (req, res) => {
@@ -103,18 +111,39 @@ app.post('/patientprofile', catchAsync(async (req, res) => {
     res.redirect('/specialties');
 
 }))
+app.post('/doctorprofile', catchAsync(async (req, res) => {
+
+    const newdoc = await new doctors(req.body);
+    newdoc.user = req.user._id;
+    newdoc.specialty = await specialties.findOne({ 'name': `${req.user._id}` })
+    newdoc.save();
+
+    res.redirect('/specialties');
+
+}))
 
 app.get('/myprofile/:patientid/update', isLoggedIn, catchAsync(async (req, res) => {
-    const requiredpatient = await Patient.findById(req.params.patientid);
+    if (req.user.usertype == 0) {
+        const requiredpatient = await Patient.findById(req.params.patientid);
+        res.render('users/updatepatientinfo', { requiredpatient });
+    }
+    else {
+        const requiredpatient = await doctors.findById(req.params.patientid).populate('specialty');
+        res.render('users/updatedoctorinfo', { requiredpatient });
 
-    res.render('users/updatepatientinfo', { requiredpatient });
+    }
 }))
 
 app.put('/myprofile/:patientid', isLoggedIn, catchAsync(async (req, res) => {
-    const kal = req.params.patientid;
-    console.log(req.body);
-    await Patient.findByIdAndUpdate(req.params.patientid, req.body, { runValidators: true });
 
+    if (req.user.usertype == 0) {
+
+        await Patient.findByIdAndUpdate(req.params.patientid, req.body, { runValidators: true });
+    }
+    else {
+
+        await doctors.findByIdAndUpdate(req.params.patientid, req.body, { runValidators: true });
+    }
     res.redirect('/myprofile');
 }))
 
