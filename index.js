@@ -39,7 +39,8 @@ db.once("open", () => {
 const session = require('express-session');
 const { isLoggedIn } = require('./middleware');
 const doctors = require('./models/doctors');
-const specialties = require('./models/specialties');
+
+
 
 const sessionOptions = {
     secret: 'thisisnotagoodsecret', resave: false, saveUninitialized: true,
@@ -234,13 +235,47 @@ app.post('/appointment/:doctorid', isLoggedIn, catchAsync(async (req, res) => {
     curpar.myappointments.push(newappt);
     await curdoc.save();
     await curpar.save();
-    res.redirect('/specialties');
+    res.redirect('/myappointments');
+}))
+
+app.get('/myappointments', isLoggedIn, catchAsync(async (req, res) => {
+
+    if (req.user.usertype == 0) {
+        const curpar = await Patient.findOne({ 'user': `${req.user._id}` }).populate({
+            path: 'myappointments',
+            populate: {
+                path: 'doctor'
+            }
+        });;
+
+        res.render('appointments/myappointments', { curpar });
+    }
+    else {
+        const curdoc = await doctors.findOne({ 'user': `${req.user._id}` }).populate({
+            path: 'myappointments',
+            populate: {
+                path: 'patient'
+            }
+        });
+
+        res.render('appointments/myappointments', { curdoc });
+
+    }
+
+
+
+}))
+app.delete('/deleteappointment/:appointmentid', isLoggedIn, catchAsync(async (req, res) => {
+    const curappt = await Appointment.findById(req.params.appointmentid);
+    await doctors.findByIdAndUpdate(curappt.doctor, { $pull: { myappointments: req.params.appointmentid } });
+    await Patient.findByIdAndUpdate(curappt.patient, { $pull: { myappointments: req.params.appointmentid } });
+    await Appointment.findByIdAndDelete(req.params.appointmentid);
+    res.redirect('/myappointments');
 }))
 
 
 
-
-app.get('/logout', catchAsync(async (req, res) => {
+app.get('/logout', isLoggedIn, catchAsync(async (req, res) => {
     req.logout();
     res.redirect('/users/login');
 }))
