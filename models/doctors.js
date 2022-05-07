@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { type } = require('os');
 const { Schema } = mongoose;
 
 const DoctorSchema = new Schema({
@@ -10,11 +11,24 @@ const DoctorSchema = new Schema({
         type: Number,
         required: true
     },
+    fullname: {
+        type: String,
+        required: true
+    },
+    qualification: {
+        type: String
+    },
     user:
     {
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    myappointments: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Appointment'
+        }
+    ]
 
 });
 

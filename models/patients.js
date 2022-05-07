@@ -22,7 +22,13 @@ const PatientSchema = new Schema({
     {
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    myappointments: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Appointment'
+        }
+    ]
 });
 
 
