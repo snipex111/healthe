@@ -115,9 +115,12 @@ app.post('/doctorprofile', catchAsync(async (req, res) => {
 
     const newdoc = await new doctors(req.body);
     newdoc.user = req.user._id;
-    newdoc.specialty = await specialties.findOne({ 'name': `${req.user._id}` })
-    newdoc.save();
-
+    console.log(req.body.selectspecialty);
+    const specialty = await specialties.findOne({ 'name': req.body.selectspecialty })
+    newdoc.specialty = specialty;
+    await newdoc.save();
+    specialty.doctors.push(newdoc);
+    await specialty.save();
     res.redirect('/specialties');
 
 }))
@@ -155,7 +158,7 @@ app.get('/specialties', catchAsync(async (req, res) => {
 }))
 app.get('/specialties/:specialtyid', catchAsync(async (req, res) => {
 
-    const specialty = await Specialty.findbyid(req.params.specialtyid).populate('doctors');
+    const specialty = await Specialty.findById(req.params.specialtyid).populate('doctors');
     res.render('appointments/show', { specialty });
 
 }))
@@ -192,7 +195,10 @@ app.post('/login', passport.authenticate('local', { failureFlash: true, failureR
     }
 }))
 
-
+app.get('/book/:doctorid', catchAsync(async (req, res) => {
+    const curdoc = await doctors.findById(req.params.doctorid);
+    res.render('appointments/book', { curdoc });
+}))
 
 
 
