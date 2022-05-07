@@ -113,12 +113,12 @@ app.post('/patientprofile', catchAsync(async (req, res) => {
     res.redirect('/specialties');
 
 }))
-app.post('/doctorprofile', catchAsync(async (req, res) => {
+app.post('/doctorprofile', isLoggedIn, catchAsync(async (req, res) => {
 
     const newdoc = await new doctors(req.body);
     newdoc.user = req.user._id;
     console.log(req.body.selectspecialty);
-    const specialty = await specialties.findOne({ 'name': req.body.selectspecialty })
+    const specialty = await Specialty.findOne({ 'name': req.body.selectspecialty })
     newdoc.specialty = specialty;
     await newdoc.save();
     specialty.doctors.push(newdoc);
@@ -264,6 +264,41 @@ app.get('/myappointments', isLoggedIn, catchAsync(async (req, res) => {
 
 
 
+}))
+app.get('/getforupdateappointment/:appointmentid', isLoggedIn, catchAsync(async (req, res) => {
+
+    const curap = await Appointment.findById(req.params.appointmentid).populate('doctor');
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0');
+    let yyyy = today.getFullYear();
+    let stdate = yyyy + '-' + mm + '-' + dd;
+
+    Date.prototype.addDays = function (days) {
+        let date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+    }
+    let date = new Date();
+    today = date.addDays(10);
+    dd = String(today.getDate()).padStart(2, '0');
+    mm = String(today.getMonth() + 1).padStart(2, '0');
+    yyyy = today.getFullYear();
+    let endate = yyyy + '-' + mm + '-' + dd;
+
+    today = curap.date;
+    console.log(today);
+    dd = String(today.getDate()).padStart(2, '0');
+    mm = String(today.getMonth() + 1).padStart(2, '0');
+    yyyy = today.getFullYear();
+    let apdate = yyyy + '-' + mm + '-' + dd;
+    console.log(apdate);
+    res.render('appointments/update', { curap, apdate, stdate, endate });
+}))
+app.put('/updateappointment/:appointmentid', isLoggedIn, catchAsync(async (req, res) => {
+
+    await Appointment.findByIdAndUpdate(req.params.appointmentid, req.body, { runValidators: true });
+    res.redirect('/myappointments');
 }))
 app.delete('/deleteappointment/:appointmentid', isLoggedIn, catchAsync(async (req, res) => {
     const curappt = await Appointment.findById(req.params.appointmentid);
