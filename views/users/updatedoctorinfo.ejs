@@ -23,7 +23,7 @@
     <div class="container-fluid vh-100" id="bg">
         <div class="row">
             <div class="col-sm-6 offset-sm-3 col-12 p-5 col-lg-4 offset-xl-4 vh-100" id="innerdiv">
-                <h3 class="mt-5 mb-2 text-center">Patient Details</h3>
+                <h3 class="mt-5 mb-2 text-center">Doctor Details</h3>
                 <form action="/myprofile/<%=requiredpatient._id%>?_method=PUT" method="post" novalidate
                     class="validated-form">
                     <div class="mb-3">
@@ -33,31 +33,19 @@
 
                     </div>
                     <div class="mb-3">
-                        <label for="age" class="form-label">Age</label>
-                        <input type="number" name="age" class="form-control" id="age" value="<%=requiredpatient.age%>">
+                        <label for="fee" class="form-label">Fee</label>
+                        <input type="number" name="fee" class="form-control" id="fee" value="<%=requiredpatient.fee%>">
 
                     </div>
                     <div class="mb-3">
-                        <select class="form-select-lg" aria-label="Default select example" name="gender"
-                            style="min-width:100%;">
-                            <option value="Male" <%if(requiredpatient.gender=='Male' ){%>selected<% } %>>Male</option>
-                            <option value="Female" <%if(requiredpatient.gender=='Female' ){%>selected<% } %>>Female
-                            </option>
-                            <option value="Others" <%if(requiredpatient.gender=='Others' ){%>selected<% } %>>Others
-                            </option>
-                        </select>
+                        <label for="qualification" class="form-label">Qualification</label>
+                        <input type="text" name="qualification" class="form-control" id="qualification"
+                            value="<%=requiredpatient.qualification%>">
+
                     </div>
-                    <div class="mb-3">
-                        <select class="form-select-lg" aria-label="Default select example" name="vaccinationstatus"
-                            style="min-width:100%;" value="<%=requiredpatient.vaccinationstatus%>">
-                            <option value="0" <%if(requiredpatient.vaccinationstatus=='0' ){%>selected<% } %>>Not
-                                    vaccinated</option>
-                            <option value="1" <%if(requiredpatient.vaccinationstatus=='1' ){%>selected<% } %>>Single
-                                    Dose</option>
-                            <option value="2" <%if(requiredpatient.vaccinationstatus=='2' ){%>selected<% } %>>Fully
-                                    vaccinated</option>
-                        </select>
-                    </div>
+
+
+
                     <div class="text-center mt-2">
                         <button type="submit" class="btn btn-outline-light">Submit</button>
                     </div>
