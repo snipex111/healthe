@@ -12,7 +12,13 @@ const UserSchema = new Schema({
     {
         type: Number,
         required: true
-    }
+    },
+    mychats: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Room'
+        }
+    ]
 
 });
 

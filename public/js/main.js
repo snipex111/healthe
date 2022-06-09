@@ -5,7 +5,7 @@ const roomName = document.getElementById("room-name");
 const userList = document.getElementById("users");
 
 //ig main.js is the intermediate between server and client
-
+console.log("qwqwewq");
 //get username and room id from URL
 const { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
