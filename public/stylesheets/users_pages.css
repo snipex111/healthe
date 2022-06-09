@@ -12,6 +12,16 @@ body {
     background-size: cover;
 }
 
-h2 {
+h2,
+a,
+p,
+a:hover,
+a:active {
     color: aliceblue;
+}
+
+a,
+a:hover,
+a:active {
+    text-decoration: underline;
 }

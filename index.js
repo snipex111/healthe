@@ -164,7 +164,12 @@ app.get('/specialties', catchAsync(async (req, res) => {
 app.get('/specialties/:specialtyid', catchAsync(async (req, res) => {
 
     const specialty = await Specialty.findById(req.params.specialtyid).populate('doctors');
-    res.render('appointments/show', { specialty });
+    if (req.isAuthenticated() && req.user.usertype == 1) {
+        const curdoc = await doctors.findOne({ 'user': `${req.user._id}` });
+        res.render('appointments/show', { specialty, curdoc });
+    }
+    else
+        res.render('appointments/show', { specialty });
 
 }))
 
@@ -187,8 +192,8 @@ app.post('/register', catchAsync(async (req, res) => {
 app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/users/login' }), catchAsync(async (req, res) => {
     try {
         if (req.user.usertype == 1)
-            req.flash('success', 'welcome back Doctor!');
-        else req.flash('success', 'welcome back Patient!');
+            req.flash('success', 'Welcome Back, Doctor!');
+        else req.flash('success', 'Welcome Back, Patient!');
 
         const redirectUrl = req.session.returnTo || '/specialties';
         delete req.session.returnTo;

@@ -26,7 +26,12 @@
                     <div class="card-body">
                         <h5 class="card-title"><%= doc.fullname %> </h5>
                         <p class="card-text"><%= doc.qualification %> </p>
+                        <% if(currentUser && currentUser.usertype==1 && curdoc._id !=doc._id) {%>
+                        <a href="/mychats">My Chats</a>&emsp;
+                        <a href="/myappointments">My Appointments</a>
+                        <% }else{ %>
                         <a href="#">Chat Now</a>&emsp;
+                        <% } %>
                         <% if((currentUser && currentUser.usertype==0)||!currentUser){ %>
                         <a href="/book/<%= doc._id %>">Book Appointment</a>
                         <% } %>
