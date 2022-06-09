@@ -29,8 +29,26 @@
                         <% if(currentUser && currentUser.usertype==1 && curdoc._id !=doc._id) {%>
                         <a href="/mychats">My Chats</a>&emsp;
                         <a href="/myappointments">My Appointments</a>
-                        <% }else{ %>
-                        <a href="#">Chat Now</a>&emsp;
+                        <% }else if(currentUser){ %>
+                        <!-- <a href="/chat.html?username=<%=currentUser._id%>&room=<%= doc._id %><%=currentUser._id%>">Chat
+                            Now</a> -->
+                        <!-- <form action="/chat.html?username=<%=currentUser._id%>&room=<%= doc._id %><%=currentUser._id%>"
+                            method="get" novalidate class="validated-form">
+                            <div class="text-center mt-2">
+                                <button type="submit" class="btn btn-outline-primary">Submit</button>
+                            </div>
+                        </form> -->
+                        <form action="/chat.html">
+                            <div class="form-control">
+                                <input type="text" name="username" id="username" placeholder="Enter username..."
+                                    required value="<%=currentUser._id%>" />
+                            </div>
+                            <div class="form-control">
+                                <input type="text" name="room" id="room" placeholder="Enter Room..." required
+                                    value="<%= doc._id %>" />
+                            </div>
+                            <button type="submit" class="btn">Join Chat</button>
+                        </form>
                         <% } %>
                         <% if((currentUser && currentUser.usertype==0)||!currentUser){ %>
                         <a href="/book/<%= doc._id %>">Book Appointment</a>
