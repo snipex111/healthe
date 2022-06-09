@@ -26,7 +26,7 @@
                     <div class="card-body">
                         <h5 class="card-title"><%= doc.fullname %> </h5>
                         <p class="card-text"><%= doc.qualification %> </p>
-                        <% if(currentUser && currentUser.usertype==1 && curdoc._id !=doc._id) {%>
+                        <% if(currentUser && currentUser.usertype==1 && curdoc.fullname.localeCompare(doc.fullname)==0) {%>
                         <a href="/mychats">My Chats</a>&emsp;
                         <a href="/myappointments">My Appointments</a>
                         <% }else if(currentUser){ %>
